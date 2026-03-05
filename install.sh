@@ -509,14 +509,15 @@ verify_deployment() {
 main() {
     echo -e "${BOLD}${CYAN}"
     cat <<'BANNER'
-   ____                  __   _ __          _ _
-  / __/__  ___ ____  __ / /__(_) /_  ____  (_|_)______
- _\ \/ _ \/ -_) __/ /  ' / _  / __/ / / / / / / __/ _ \
-/___/ .__/\__/\__/ /_/\_/\_,_/\__/ /_/ /_/_/_/\__/\_,_/
-   /_/
+  ____                       _ _         
+ / ___| _ __   ___  ___ _ __(_) |_ _   _ 
+ \___ \| '_ \ / _ \/ __| '__| | __| | | |
+  ___) | |_) |  __/ (__| |  | | |_| |_| |
+ |____/| .__/ \___|\___|_|  |_|\__|\__, |
+       |_|                         |___/ 
 BANNER
     echo -e "${NC}"
-    echo -e "  ${DIM}v${VERSION} — Spec-Kit Jira Integration Installer${NC}"
+    echo -e "  ${DIM}v${VERSION} — Specrity Workflow Installer${NC}"
     echo ""
 
     # Parse arguments
