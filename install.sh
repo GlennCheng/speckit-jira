@@ -225,9 +225,26 @@ setup_project_config() {
             spec_path="${sub_path:-specs/}"
             # Check if submodule exists
             if [[ ! -d "${PROJECT_ROOT}/${spec_path}/.git" ]] && ! git -C "$PROJECT_ROOT" submodule status 2>/dev/null | grep -q "$spec_path"; then
-                log_warn "Submodule not found at '${spec_path}'."
-                echo -e "  You'll need to add it first:"
-                echo -e "  ${CYAN}git submodule add <remote-url> ${spec_path}${NC}"
+                echo ""
+                log_error "Submodule not found at '${spec_path}'."
+                echo ""
+                echo -e "  ${BOLD}請先建立 Spec Submodule，再重新執行 install.sh：${NC}"
+                echo ""
+                echo -e "  ${CYAN}# Step 1: 在 GitHub/GitLab 建立一個新 repo（例如 my-project-specs）${NC}"
+                echo ""
+                echo -e "  ${CYAN}# Step 2: 在主專案中加為 submodule${NC}"
+                echo -e "  ${YELLOW}cd ${PROJECT_ROOT}${NC}"
+                echo -e "  ${YELLOW}git submodule add git@github.com:your-org/my-project-specs.git ${spec_path}${NC}"
+                echo -e "  ${YELLOW}git commit -m \"chore: add spec submodule\"${NC}"
+                echo -e "  ${YELLOW}git push${NC}"
+                echo ""
+                echo -e "  ${CYAN}# Step 3: 重新執行安裝${NC}"
+                echo -e "  ${YELLOW}$0 $*${NC}"
+                echo ""
+                echo -e "  ${BOLD}或者選擇 local 模式（不需要額外 repo）：${NC}"
+                echo -e "  重新執行 install.sh，選擇 ${CYAN}1) local${NC}"
+                echo ""
+                exit 1
             fi
             ;;
         3)
