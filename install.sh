@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 #
-# install.sh — Speckit-Jira 一鍵安裝腳本
+# install.sh — Speckit-Jira Installer
 #
-# 將 speckit-jira workflow prompts 部署到各種 AI 工具的對應目錄。
-# 參考 spec-kit 的 agent registry 模式，支援 17+ 種 LLM 工具。
+# Deploy speckit-jira workflow prompts to various AI tool directories.
+# Based on spec-kit's agent registry pattern, supports 17+ LLM tools.
 #
 # Usage:
-#   ./install.sh                    # 互動模式，詢問要安裝的工具
-#   ./install.sh cursor-agent       # 指定安裝到 Cursor
-#   ./install.sh claude agy         # 同時安裝到多個工具
-#   ./install.sh --all              # 安裝到所有偵測到的工具
-#   ./install.sh --help             # 顯示說明
+#   ./install.sh                    # Interactive mode
+#   ./install.sh cursor-agent       # Install to Cursor
+#   ./install.sh claude agy         # Install to multiple tools
+#   ./install.sh --all              # Install to all detected tools
+#   ./install.sh --help             # Show help
 #
 
 set -euo pipefail
@@ -228,21 +228,21 @@ setup_project_config() {
                 echo ""
                 log_error "Submodule not found at '${spec_path}'."
                 echo ""
-                echo -e "  ${BOLD}請先建立 Spec Submodule，再重新執行 install.sh：${NC}"
+                echo -e "  ${BOLD}Please set up the Spec Submodule first, then re-run install.sh:${NC}"
                 echo ""
-                echo -e "  ${CYAN}# Step 1: 在 GitHub/GitLab 建立一個新 repo（例如 my-project-specs）${NC}"
+                echo -e "  ${CYAN}# Step 1: Create a new repo on GitHub/GitLab (e.g. my-project-specs)${NC}"
                 echo ""
-                echo -e "  ${CYAN}# Step 2: 在主專案中加為 submodule${NC}"
+                echo -e "  ${CYAN}# Step 2: Add it as a submodule in your project${NC}"
                 echo -e "  ${YELLOW}cd ${PROJECT_ROOT}${NC}"
                 echo -e "  ${YELLOW}git submodule add git@github.com:your-org/my-project-specs.git ${spec_path}${NC}"
                 echo -e "  ${YELLOW}git commit -m \"chore: add spec submodule\"${NC}"
                 echo -e "  ${YELLOW}git push${NC}"
                 echo ""
-                echo -e "  ${CYAN}# Step 3: 重新執行安裝${NC}"
+                echo -e "  ${CYAN}# Step 3: Re-run the installer${NC}"
                 echo -e "  ${YELLOW}$0 $*${NC}"
                 echo ""
-                echo -e "  ${BOLD}或者選擇 local 模式（不需要額外 repo）：${NC}"
-                echo -e "  重新執行 install.sh，選擇 ${CYAN}1) local${NC}"
+                echo -e "  ${BOLD}Or choose local mode instead (no extra repo needed):${NC}"
+                echo -e "  Re-run install.sh and select ${CYAN}1) local${NC}"
                 echo ""
                 exit 1
             fi
