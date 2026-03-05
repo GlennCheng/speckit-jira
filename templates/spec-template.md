@@ -194,6 +194,19 @@
 
 ---
 
+## 原始解法建議 *(reference only — 僅供背景參考)*
+
+<!--
+  ⚠️ 此區塊僅作為背景參考，不是需求。
+  客戶或 PM 提出的具體建議通常是「解法」，不等於真正的「需求」。
+  實際需求應寫在 User Stories 和 Requirements 中，聚焦於要解決的問題與目的。
+  若需要 RD 做 RCA 再決定技術方向，使用 [NEEDS RCA] 標記。
+-->
+
+| 來源 | 原始描述 | 處理狀態 |
+|------|---------|----------|
+| [客戶 / PM / Ticket comment] | 「[原始建議內容]」 | ✅ 已轉化為需求 / 📝 僅作參考 / 🔍 [NEEDS RCA] |
+
 ## AI Generation Guidelines
 
 When creating this spec from a user prompt:
@@ -207,10 +220,8 @@ When creating this spec from a user prompt:
 4. **Prioritize clarifications**: scope > user experience > success metrics > edge cases
 5. **Think like a PM**: Every requirement should answer "what value does this deliver to the user?"
 6. **No technical jargon**: Avoid mentioning frameworks, APIs, databases, or implementation patterns
-
-**Examples of reasonable defaults** (don't ask about these):
-
-- Data retention: Industry-standard practices for the domain
-- Performance targets: Standard web/mobile app expectations unless specified
-- Error handling: User-friendly messages with appropriate fallbacks
-- Authentication: Follow existing project patterns
+7. **解法建議 ≠ 需求**：當 Jira ticket 中包含客戶或 PM 提出的具體解法建議時：
+   - **不得**直接將建議寫成 FR
+   - 將建議寫入「原始解法建議」區塊
+   - 透過 Clarify 問 PM：這是必須執行的確認需求 / 僅是建議參考 / 需要 RD 評估 (RCA)
+   - 若需 RCA，標記 `[NEEDS RCA]`，留給 `/dev.plan` 處理
