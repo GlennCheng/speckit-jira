@@ -48,14 +48,16 @@ Clarify 採用**分輪互動 + Checkpoint**機制（源自原生 spec-kit clarif
 設定優先權：`.specrity/.specrity.yml` → `.env` → 自動偵測
 
 1. 找到專案根目錄（往上層尋找 `.git`）
-2. 讀取 `.specrity/.specrity.yml`：
-   - `spec_mode`：`local`（預設）/ `submodule` / `external`
-   - `spec_path`：spec 目錄的相對路徑（預設 `specs/`）
-   - `jira_cloud_id`（選填）
-   - `jira_project_key`（選填）
+2. **強制讀取 `.specrity/.specrity.yml`**：
+   - AI 必須確實解析此檔案，禁止憑空猜測。
+   - 提取 `spec_mode`：`local`（預設）/ `submodule` / `external`
+   - 提取 `spec_path`：spec 目錄的相對路徑（預設 `specrity/`）
+   - 提取 `jira_cloud_id`（選填）
+   - 提取 `jira_project_key`（選填）
 3. 若 `spec_mode: external`，從 `.env` 讀取 `SPEC_REPO_PATH`
-4. 若 `.specrity/.specrity.yml` 不存在且 `.env` 也沒設定：
-   - 預設使用 `spec_mode: local`、`spec_path: specs/`
+4. 若 `spec_mode: submodule`，**強制檢查 `.gitmodules`** 確認實際的 submodule 路徑是否與 `spec_path` 一致。
+5. 若 `.specrity/.specrity.yml` 不存在且 `.env` 也沒設定：
+   - 預設使用 `spec_mode: local`、`spec_path: specrity/`
 5. 從 `<TICKET_ID>` 解析 project key（如 `HTGO2-123` → `HTGO2`）
 6. 若未設定 `jira_cloud_id`，透過 MCP `getAccessibleAtlassianResources` 自動取得
 7. 決定 spec 根目錄 `$SPEC_ROOT`：
@@ -387,7 +389,7 @@ PRD 就在主 repo 裡，PM **必須建 feature branch** 才能 commit。
 
 2. **建立 Branch 並推送**
    - `git checkout -b feature/<TICKET_ID>-<slugified-title>`
-   - `git add specs/`
+   - `git add specrity/`
    - `git commit -m "feat: publish PRD for <TICKET_ID>"`
    - `git push -u origin feature/<TICKET_ID>-<slugified-title>`
 
