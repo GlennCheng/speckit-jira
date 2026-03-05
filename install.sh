@@ -357,7 +357,7 @@ HEADER
         if [[ -f "$workflow_file" ]]; then
             local basename
             basename=$(basename "$workflow_file" .md)
-            echo "## /${basename//.//}"
+            echo "## /${basename}"
             echo ""
             # Strip YAML frontmatter
             sed '1{/^---$/!b};1,/^---$/d' "$workflow_file"
