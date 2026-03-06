@@ -108,6 +108,7 @@ Clarify 採用**分輪互動 + Checkpoint**機制（源自原生 spec-kit clarif
    ```
 6. 初始化空的 `clarify-log.md` 和 `prd.md`
 7. **強制執行 MCP Jira 更新**（在開始發問之前）：
+   > **[CRITICAL INSTRUCTION TO AI]**: 透過 MCP 執行 `addCommentToJiraIssue` 時，`commentBody` 參數 **MUST EXACTLY MATCH (必須完全一致，不可改寫)** 雙引號內的內容：
    ```
    使用 MCP tool: addCommentToJiraIssue
    參數: cloudId = $JIRA_CLOUD_ID, issueIdOrKey = <TICKET_ID>, commentBody = "🤖 [Specrity] ✍️ PRD 起草與釐清階段已開始"
@@ -202,7 +203,8 @@ Clarify 採用**分輪互動 + Checkpoint**機制（源自原生 spec-kit clarif
 
 每輪流程：
 
-1. **分組與排版要求**：以「Modern Dashboard (現代卡片)」的風格輸出問題。必須使用引言區塊（`> `）、Emoji 與分隔線，讓畫面乾淨俐落。標題必須加上目前的 Round 數。
+1. **分組與排版要求**：
+   > **[CRITICAL INSTRUCTION TO AI]**: 你接下來的輸出內容 **MUST STRICTLY FOLLOW (必須嚴格遵守)** 以下「Modern Dashboard (現代卡片)」的 Markdown 排版格式與結構，不要隨意改變。必須使用引言區塊（`> `）、Emoji 與分隔線，讓畫面乾淨俐落。標題必須加上目前的 Round 數。
 
 2. **多選題格式範例**：
    ```markdown
@@ -240,7 +242,9 @@ Clarify 採用**分輪互動 + Checkpoint**機制（源自原生 spec-kit clarif
 > **每一輪結束後，MUST 執行 Checkpoint。絕對不可跳過。**
 > **在 PM 明確說出「定稿」或「夠了」之前，不得進入 Step 3。**
 
-Checkpoint 展示格式（同樣套用 Modern Dashboard 風格）：
+Checkpoint 展示格式：
+
+> **[CRITICAL INSTRUCTION TO AI]**: 此 Checkpoint 畫面 **MUST STRICTLY FOLLOW** 以下 Modern Dashboard 風格排版，絕不准使用舊版純文字格式：
 
 ```markdown
 > 📊 **Clarify Checkpoint** | Round <N> 完成
