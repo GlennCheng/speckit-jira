@@ -37,12 +37,12 @@ log_header()  { echo -e "\n${BOLD}${CYAN}═══ $* ═══${NC}\n"; }
 
 # ─── Agent Registry ───
 # Format: KEY|DISPLAY_NAME|TARGET_PATH|FORMAT_TYPE
-# FORMAT_TYPE: cli_single (single merged md), ide_frontmatter (with frontmatter), agy_copy (direct copy)
+# FORMAT_TYPE: cli_single (single merged md), ide_frontmatter (with frontmatter), cursor_commands (per-file to .cursor/commands), agy_copy (direct copy)
 declare -a AGENT_REGISTRY=(
     "claude|Claude Code (CLI)|CLAUDE.md|cli_single"
     "gemini|Gemini CLI|GEMINI.md|cli_single"
     "copilot|GitHub Copilot|.github/agents/copilot-instructions.md|cli_single"
-    "cursor-agent|Cursor IDE|.cursor/rules/specrity.mdc|ide_frontmatter"
+    "cursor-agent|Cursor IDE|.cursor/commands/|cursor_commands"
     "windsurf|Windsurf|.windsurf/rules/specrity.md|ide_frontmatter"
     "agy|Antigravity|.agents/workflows/|agy_copy"
     "qwen|Qwen Code|QWEN.md|cli_single"
@@ -204,7 +204,8 @@ setup_project_config() {
         sed 's/^/    /' "$config_file" | grep -v '^    #' | grep -v '^$' | head -10
         echo ""
         read -rp "Keep current config? [Y/n]: " keep
-        if [[ "${keep,,}" != "n" ]]; then
+        keep_lower=$(echo "$keep" | tr '[:upper:]' '[:lower:]')
+        if [[ "$keep_lower" != "n" ]]; then
             log_ok "Using existing configuration"
             return
         fi
@@ -383,7 +384,7 @@ HEADER
             echo "## /${basename}"
             echo ""
             # Strip YAML frontmatter
-            sed '1{/^---$/!b};1,/^---$/d' "$workflow_file"
+            awk 'BEGIN{skip=0} NR==1 && /^---$/{skip=1; next} skip && /^---$/{skip=0; next} !skip' "$workflow_file"
             echo ""
             echo "---"
             echo ""
@@ -395,26 +396,30 @@ HEADER
 generate_ide_frontmatter_content() {
     local agent_key="$1"
 
-    # Cursor uses .mdc format with specific frontmatter
-    if [[ "$agent_key" == "cursor-agent" ]]; then
-        cat <<MDC_HEADER
----
-description: Specrity workflow commands for Jira-integrated development
-globs:
-alwaysApply: false
----
-
-MDC_HEADER
-    else
-        cat <<MD_HEADER
+    cat <<MD_HEADER
 ---
 description: Specrity workflow commands for Jira-integrated development
 ---
 
 MD_HEADER
-    fi
 
     generate_cli_single_content | tail -n +8  # Skip the header that's replaced by frontmatter
+}
+
+# Deploy workflows for Cursor IDE (one file per workflow, stripped frontmatter)
+deploy_cursor_commands() {
+    local target_dir="${PROJECT_ROOT}/.cursor/commands"
+    mkdir -p "$target_dir"
+
+    for workflow_file in "${WORKFLOWS_DIR}"/*.md; do
+        if [[ -f "$workflow_file" ]]; then
+            local basename
+            basename=$(basename "$workflow_file")
+            # Strip YAML frontmatter (Cursor commands must be plain markdown, no frontmatter)
+            awk 'BEGIN{skip=0} NR==1 && /^---$/{skip=1; next} skip && /^---$/{skip=0; next} !skip' "$workflow_file" > "${target_dir}/${basename}"
+            log_ok "  Deployed ${basename} → .cursor/commands/${basename}"
+        fi
+    done
 }
 
 # Deploy workflows for Antigravity (direct copy, one file per workflow)
@@ -469,6 +474,10 @@ deploy_agent() {
             log_ok "  Created ${target_path}"
             ;;
 
+        cursor_commands)
+            deploy_cursor_commands
+            ;;
+
         agy_copy)
             deploy_agy_copy
             ;;
@@ -492,7 +501,15 @@ verify_deployment() {
         IFS='|' read -r key name target_path format_type <<< "$entry"
         ((total++))
 
-        if [[ "$format_type" == "agy_copy" ]]; then
+        if [[ "$format_type" == "cursor_commands" ]]; then
+            local target_dir="${PROJECT_ROOT}/.cursor/commands"
+            if [[ -d "$target_dir" ]] && ls "${target_dir}"/*.md &>/dev/null; then
+                echo -e "  ${GREEN}✓${NC} ${name}: workflows deployed to .cursor/commands/"
+                ((success++))
+            else
+                echo -e "  ${RED}✗${NC} ${name}: deployment to .cursor/commands/ failed"
+            fi
+        elif [[ "$format_type" == "agy_copy" ]]; then
             local target_dir="${PROJECT_ROOT}/.agents/workflows"
             if [[ -d "$target_dir" ]] && ls "${target_dir}"/*.md &>/dev/null; then
                 echo -e "  ${GREEN}✓${NC} ${name}: workflows deployed"
